@@ -65,25 +65,54 @@ class World:
         y = random.randint(0, dimension)
         room_count = 0
 
+        N = (0, 1)
+        E = (1, 0)
+        S = (0, -1)
+        W = (-1, 0)
+
         # While the number of tunnels is not zero
-
+        previous_room = None
+        tunnels = max_tunnels
+        while tunnels > 0:
             # Choose randon length from max_length
-
+            length = random.randint(0, max_length)
             # Choose random direction to turn (N,E,S,W)
+            direction = random.choice([N, E, S, W])
+            # Draw a tunnel of chosen length in chosen direction and avoid edges of map
+            while length > 0:
+                # create room
+                room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+                #room_dict = json.dumps(room.__dict__)
+                #self.room_list.append(room_dict)
 
-            # Draw a tunnel in that direction and avoid edges of map
+                # save room to world grid
+                self.grid[y][x] = room
 
-            # Create room at each step in that direction,
-            # saving it in world grid, and connecting rooms to previous room
+                # connect room to previous room
+                if previous_room is not None:
+                    previous_room.connect_rooms(room, room_direction)
+
+                # Update iteration variables
+                previous_room = room
+                room_count += 1
+
+                # move one step in chosen direction
+                x, y = direction
+                # if hit wall, pick new direction
+                # if 0 < x < dimension is False or if 0 < y < dimension is False:
+
+                # decrement length until 0
+                length -= 1
 
             # Decrement the number of tunnels and repeat while loop
+            tunnels -= 1
 
 
         # Loop continues until number of tunnels == 0
 
 
 
-'''
+
     def generate_rooms(self, size_x, size_y, num_rooms):
         '''
         Fill up the grid, bottom to top, in a zig-zag pattern
@@ -138,7 +167,7 @@ class World:
             # Update iteration variables
             previous_room = room
             room_count += 1
-'''
+
 
 
     def print_rooms(self):
