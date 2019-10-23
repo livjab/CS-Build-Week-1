@@ -48,6 +48,7 @@ class World:
         self.width = 0
         self.height = 0
         self.room_list = []
+        self.coordinates = []
 
     def generate_rooms(self, dimension, max_tunnels, max_length):
         '''
@@ -81,24 +82,31 @@ class World:
             direction = random.choice([[0, 1, 'n'], [1, 0, 'e'], [0, -1, 's'], [-1, 0, 'w']])
             # Draw a tunnel of chosen length in chosen direction and avoid edges of map
             while length > 0:
-                # create room
-                room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
-                # add to json file for iOS guys
-                #room_dict = json.dumps(room.__dict__)
-                #self.room_list.append(room_dict)
-                print("Room created at: ", x, y)
-                print("Moving in direction: ", direction[2])
-                print("Length of this tunnel is", length)
-                # save room to world grid
-                self.grid[y][x] = room
+                # check if room already exists in this square
+                coords = (x, y)
+                if coords not in self.coordinates:
+                    # create room
+                    room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+                    # add coordinates to coords list
+                    self.coordinates.append((x, y))
 
-                # connect room to previous room
-                if previous_room is not None:
-                    previous_room.connect_rooms(room, room_direction)
+                    # add to json file for iOS guys
+                    room_dict = json.dumps(room.__dict__)
+                    self.room_list.append(room_dict)
+                    #print("Room created at: ", x, y)
+                    #print("Moving in direction: ", direction[2])
+                    #print("Length of this tunnel is", length)
 
-                # Update iteration variables
-                previous_room = room
-                room_count += 1
+                    # save room to world grid
+                    self.grid[y][x] = room
+
+                    # connect room to previous room
+                    if previous_room is not None:
+                        previous_room.connect_rooms(room, room_direction)
+
+                    # Update iteration variables
+                    previous_room = room
+                    room_count += 1
 
                 # Try to move in chosen direction if inside grid
                 if 0 <= (x + direction[0]) < dimension and 0 <= (y + direction[1]) < dimension:
@@ -237,17 +245,17 @@ w = World()
 #width = 15
 #height = 15
 dimension = 15
-max_tunnels = 50
-max_length = 12
+max_tunnels = 60
+max_length = 8
 w.generate_rooms(dimension, max_tunnels, max_length)
 w.print_rooms()
 
-#with open('rooms.txt', 'w') as file:
-#    json.dump(w.room_list, file)
+with open('rooms.txt', 'w') as file:
+    json.dump(w.room_list, file)
 #with open('rooms.txt', 'r') as read_file:
 #    data = json.load(read_file)
 #print(data)
 
 
 #print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
-print(f"\n\nWorld\n  dimension: {dimension}\n  max_tunnels: {max_tunnels}\n  max_length: {max_length}\n")
+print(f"\n\nWorld\n  dimension: {dimension}\n  max_tunnels: {max_tunnels}\n  max_length: {max_length}\n number of rooms: {len(w.coordinates)}")
