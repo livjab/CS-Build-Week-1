@@ -48,11 +48,11 @@ class World:
         self.width = 0
         self.height = 0
         self.room_list = []
+
     def generate_rooms(self, dimension, max_tunnels, max_length):
         '''
         Randomly generate rooms using the Random Walk Algorithm
         '''
-
         # Initialize grid
         self.width = dimension
         self.height = dimension
@@ -63,12 +63,13 @@ class World:
         # Start at random point on map
         x = random.randint(0, dimension)
         y = random.randint(0, dimension)
+        print("Starting at: ", x, y)
         room_count = 0
 
-        N = (0, 1)
-        E = (1, 0)
-        S = (0, -1)
-        W = (-1, 0)
+        N = (0, 1, 'n')
+        E = (1, 0, 'e')
+        S = (0, -1, 's')
+        W = (-1, 0, 'w')
 
         # While the number of tunnels is not zero
         previous_room = None
@@ -77,14 +78,17 @@ class World:
             # Choose randon length from max_length
             length = random.randint(0, max_length)
             # Choose random direction to turn (N,E,S,W)
-            direction = random.choice([N, E, S, W])
+            direction = random.choice([[0, 1, 'n'], [1, 0, 'e'], [0, -1, 's'], [-1, 0, 'w']])
             # Draw a tunnel of chosen length in chosen direction and avoid edges of map
             while length > 0:
                 # create room
                 room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+                # add to json file for iOS guys
                 #room_dict = json.dumps(room.__dict__)
                 #self.room_list.append(room_dict)
-
+                print("Room created at: ", x, y)
+                print("Moving in direction: ", direction[2])
+                print("Length of this tunnel is", length)
                 # save room to world grid
                 self.grid[y][x] = room
 
@@ -96,10 +100,15 @@ class World:
                 previous_room = room
                 room_count += 1
 
-                # move one step in chosen direction
-                x, y = direction
-                # if hit wall, pick new direction
-                # if 0 < x < dimension is False or if 0 < y < dimension is False:
+                # Try to move in chosen direction if inside grid
+                if 0 <= (x + direction[0]) < dimension and 0 <= (y + direction[1]) < dimension:
+                    # if new x and new y are in range, keep them and set room direction
+                    x = x + direction[0]
+                    y = y + direction[1]
+                    room_direction = direction[2]
+                else:
+                    # if x or y is not in range, break loop and restart
+                    length = 0
 
                 # decrement length until 0
                 length -= 1
@@ -110,13 +119,12 @@ class World:
 
         # Loop continues until number of tunnels == 0
 
-
-
+    '''
 
     def generate_rooms(self, size_x, size_y, num_rooms):
-        '''
+        """
         Fill up the grid, bottom to top, in a zig-zag pattern
-        '''
+        """
 
         # Initialize the grid
         self.grid = [None] * size_y
@@ -154,8 +162,8 @@ class World:
             # Create a room in the given direction
             room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
             # Note that in Django, you'll need to save the room after you create it
-            #room_dict = json.dumps(room.__dict__)
-            #self.room_list.append(room_dict)
+            room_dict = json.dumps(room.__dict__)
+            self.room_list.append(room_dict)
 
             # Save the room in the World grid
             self.grid[y][x] = room
@@ -167,8 +175,7 @@ class World:
             # Update iteration variables
             previous_room = room
             room_count += 1
-
-
+    '''
 
     def print_rooms(self):
         '''
@@ -226,10 +233,13 @@ class World:
 
 
 w = World()
-num_rooms = 100
-width = 12
-height = 10
-w.generate_rooms(width, height, num_rooms)
+#num_rooms = 100
+#width = 15
+#height = 15
+dimension = 15
+max_tunnels = 50
+max_length = 12
+w.generate_rooms(dimension, max_tunnels, max_length)
 w.print_rooms()
 
 #with open('rooms.txt', 'w') as file:
@@ -239,4 +249,5 @@ w.print_rooms()
 #print(data)
 
 
-print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
+#print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
+print(f"\n\nWorld\n  dimension: {dimension}\n  max_tunnels: {max_tunnels}\n  max_length: {max_length}\n")
