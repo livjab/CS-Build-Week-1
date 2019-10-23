@@ -1,9 +1,15 @@
+import json
+import random
 # Sample Python code that can be used to generate rooms in
 # a zig-zag pattern.
 #
 # You can modify generate_rooms() to create your own
 # procedural generation algorithm and use print_rooms()
 # to see the world.
+
+#https://www.youtube.com/watch?v=WumyfLEa6bU
+#Title, Description, Room Description
+#output to JSON objects
 
 
 class Room:
@@ -41,6 +47,43 @@ class World:
         self.grid = None
         self.width = 0
         self.height = 0
+        self.room_list = []
+    def generate_rooms(self, dimension, max_tunnels, max_length):
+        '''
+        Randomly generate rooms using the Random Walk Algorithm
+        '''
+
+        # Initialize grid
+        self.width = dimension
+        self.height = dimension
+        self.grid = [None] * dimension
+        for i in range(len(self.grid)):
+            self.grid[i] = [None] * dimension
+
+        # Start at random point on map
+        x = random.randint(0, dimension)
+        y = random.randint(0, dimension)
+        room_count = 0
+
+        # While the number of tunnels is not zero
+
+            # Choose randon length from max_length
+
+            # Choose random direction to turn (N,E,S,W)
+
+            # Draw a tunnel in that direction and avoid edges of map
+
+            # Create room at each step in that direction,
+            # saving it in world grid, and connecting rooms to previous room
+
+            # Decrement the number of tunnels and repeat while loop
+
+
+        # Loop continues until number of tunnels == 0
+
+
+
+'''
     def generate_rooms(self, size_x, size_y, num_rooms):
         '''
         Fill up the grid, bottom to top, in a zig-zag pattern
@@ -82,6 +125,8 @@ class World:
             # Create a room in the given direction
             room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
             # Note that in Django, you'll need to save the room after you create it
+            #room_dict = json.dumps(room.__dict__)
+            #self.room_list.append(room_dict)
 
             # Save the room in the World grid
             self.grid[y][x] = room
@@ -93,7 +138,7 @@ class World:
             # Update iteration variables
             previous_room = room
             room_count += 1
-
+'''
 
 
     def print_rooms(self):
@@ -152,11 +197,17 @@ class World:
 
 
 w = World()
-num_rooms = 44
-width = 8
-height = 7
+num_rooms = 100
+width = 12
+height = 10
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
+
+#with open('rooms.txt', 'w') as file:
+#    json.dump(w.room_list, file)
+#with open('rooms.txt', 'r') as read_file:
+#    data = json.load(read_file)
+#print(data)
 
 
 print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
