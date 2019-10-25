@@ -11,6 +11,13 @@ import random
 #Title, Description, Room Description
 #output to JSON objects
 
+# importing names and descriptions that have been generated elsewhere
+with open('util/names.txt', 'r') as file1:
+    names_list = json.load(file1)
+
+with open('util/desc_json.txt', 'r') as file2:
+    descriptions_list = json.load(file2)
+
 
 class Room:
     def __init__(self, id, name, description, x, y):
@@ -86,7 +93,7 @@ class World:
                 coords = (x, y)
                 if coords not in self.coordinates:
                     # create room
-                    room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+                    room = Room(room_count, random.choice(names_list), random.choice(descriptions_list), x, y)
                     # add coordinates to coords list
                     self.coordinates.append((x, y))
 
